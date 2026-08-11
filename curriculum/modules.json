@@ -1,0 +1,408 @@
+{
+  "schema_version": 1,
+  "product": "flight-dynamics-learning",
+  "title": "Flight Dynamics and Aerospace GNC",
+  "purpose": "Connect frames, aerodynamics, vehicle modes, navigation, guidance, autopilots, and flight-system HIL.",
+  "module_count": 24,
+  "progression_rule": "Complete modules in order until the first six are complete; later modules may be selected when their prerequisites are met.",
+  "interaction_contract": {
+    "environment": "MATLAB",
+    "notebook_format": "MATLAB scripts with %% Live Editor cells",
+    "lever_ui": "uifigure controls",
+    "required_sweeps": 2,
+    "required_broken_cases": 1,
+    "randomness": "seeded",
+    "base_matlab_preferred": true,
+    "learning_cycle": [
+      "read",
+      "visualize-baseline",
+      "move-one-lever",
+      "visualize-delta",
+      "read-and-explain"
+    ]
+  },
+  "modules": [
+    {
+      "number": 1,
+      "id": "P01",
+      "title": "Turn Bank Angle into a Flight Path",
+      "guiding_question": "How do bank angle and airspeed determine turn rate, radius, and load factor?",
+      "phase": 1,
+      "phase_title": "Point-mass flight",
+      "slug": "turn-bank-angle-into-a-flight-path",
+      "folder": "modules/01-turn-bank-angle-into-a-flight-path",
+      "status": "implemented",
+      "implementation_batch": "P01",
+      "prerequisites": [],
+      "evidence_level": "simulated"
+    },
+    {
+      "number": 2,
+      "id": "P02",
+      "title": "Transform Between Aerospace Frames",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you transform Between Aerospace Frames?",
+      "phase": 1,
+      "phase_title": "Point-mass flight",
+      "slug": "transform-between-aerospace-frames",
+      "folder": "modules/02-transform-between-aerospace-frames",
+      "status": "scaffolded",
+      "implementation_batch": "P02",
+      "prerequisites": [
+        "P01"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 3,
+      "id": "P03",
+      "title": "Build an Atmosphere Model",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you build an Atmosphere Model?",
+      "phase": 1,
+      "phase_title": "Point-mass flight",
+      "slug": "build-an-atmosphere-model",
+      "folder": "modules/03-build-an-atmosphere-model",
+      "status": "scaffolded",
+      "implementation_batch": "P03",
+      "prerequisites": [
+        "P02"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 4,
+      "id": "P04",
+      "title": "Balance Forces in Trim",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you balance Forces in Trim?",
+      "phase": 1,
+      "phase_title": "Point-mass flight",
+      "slug": "balance-forces-in-trim",
+      "folder": "modules/04-balance-forces-in-trim",
+      "status": "scaffolded",
+      "implementation_batch": "P04",
+      "prerequisites": [
+        "P03"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 5,
+      "id": "P05",
+      "title": "See Longitudinal Static Stability",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you see Longitudinal Static Stability?",
+      "phase": 2,
+      "phase_title": "Stability and modes",
+      "slug": "see-longitudinal-static-stability",
+      "folder": "modules/05-see-longitudinal-static-stability",
+      "status": "scaffolded",
+      "implementation_batch": "P05",
+      "prerequisites": [
+        "P04"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 6,
+      "id": "P06",
+      "title": "Excite the Short-Period and Phugoid Modes",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you excite the Short-Period and Phugoid Modes?",
+      "phase": 2,
+      "phase_title": "Stability and modes",
+      "slug": "excite-the-short-period-and-phugoid-modes",
+      "folder": "modules/06-excite-the-short-period-and-phugoid-modes",
+      "status": "scaffolded",
+      "implementation_batch": "P06",
+      "prerequisites": [
+        "P05"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 7,
+      "id": "P07",
+      "title": "Excite Roll, Spiral, and Dutch-Roll Modes",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you excite Roll, Spiral, and Dutch-Roll Modes?",
+      "phase": 2,
+      "phase_title": "Stability and modes",
+      "slug": "excite-roll-spiral-and-dutch-roll-modes",
+      "folder": "modules/07-excite-roll-spiral-and-dutch-roll-modes",
+      "status": "scaffolded",
+      "implementation_batch": "P07",
+      "prerequisites": [
+        "P06"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 8,
+      "id": "P08",
+      "title": "Relate Stability Derivatives to Motion",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you relate Stability Derivatives to Motion?",
+      "phase": 2,
+      "phase_title": "Stability and modes",
+      "slug": "relate-stability-derivatives-to-motion",
+      "folder": "modules/08-relate-stability-derivatives-to-motion",
+      "status": "scaffolded",
+      "implementation_batch": "P08",
+      "prerequisites": [
+        "P07"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 9,
+      "id": "P09",
+      "title": "Integrate 6-DOF Equations",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you integrate 6-DOF Equations?",
+      "phase": 3,
+      "phase_title": "Six-degree-of-freedom simulation",
+      "slug": "integrate-6-dof-equations",
+      "folder": "modules/09-integrate-6-dof-equations",
+      "status": "scaffolded",
+      "implementation_batch": "P09",
+      "prerequisites": [
+        "P08"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 10,
+      "id": "P10",
+      "title": "Model Actuator Dynamics and Limits",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you model Actuator Dynamics and Limits?",
+      "phase": 3,
+      "phase_title": "Six-degree-of-freedom simulation",
+      "slug": "model-actuator-dynamics-and-limits",
+      "folder": "modules/10-model-actuator-dynamics-and-limits",
+      "status": "scaffolded",
+      "implementation_batch": "P10",
+      "prerequisites": [
+        "P09"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 11,
+      "id": "P11",
+      "title": "Model Flight Sensors",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you model Flight Sensors?",
+      "phase": 3,
+      "phase_title": "Six-degree-of-freedom simulation",
+      "slug": "model-flight-sensors",
+      "folder": "modules/11-model-flight-sensors",
+      "status": "scaffolded",
+      "implementation_batch": "P11",
+      "prerequisites": [
+        "P10"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 12,
+      "id": "P12",
+      "title": "Validate Energy and Frame Conventions",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you validate Energy and Frame Conventions?",
+      "phase": 3,
+      "phase_title": "Six-degree-of-freedom simulation",
+      "slug": "validate-energy-and-frame-conventions",
+      "folder": "modules/12-validate-energy-and-frame-conventions",
+      "status": "scaffolded",
+      "implementation_batch": "P12",
+      "prerequisites": [
+        "P11"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 13,
+      "id": "P13",
+      "title": "Hold Pitch and Altitude",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you hold Pitch and Altitude?",
+      "phase": 4,
+      "phase_title": "Autopilots",
+      "slug": "hold-pitch-and-altitude",
+      "folder": "modules/13-hold-pitch-and-altitude",
+      "status": "scaffolded",
+      "implementation_batch": "P13",
+      "prerequisites": [
+        "P12"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 14,
+      "id": "P14",
+      "title": "Hold Roll and Heading",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you hold Roll and Heading?",
+      "phase": 4,
+      "phase_title": "Autopilots",
+      "slug": "hold-roll-and-heading",
+      "folder": "modules/14-hold-roll-and-heading",
+      "status": "scaffolded",
+      "implementation_batch": "P14",
+      "prerequisites": [
+        "P13"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 15,
+      "id": "P15",
+      "title": "Control Speed with Throttle",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you control Speed with Throttle?",
+      "phase": 4,
+      "phase_title": "Autopilots",
+      "slug": "control-speed-with-throttle",
+      "folder": "modules/15-control-speed-with-throttle",
+      "status": "scaffolded",
+      "implementation_batch": "P15",
+      "prerequisites": [
+        "P14"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 16,
+      "id": "P16",
+      "title": "Schedule Gains Across Flight Conditions",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you schedule Gains Across Flight Conditions?",
+      "phase": 4,
+      "phase_title": "Autopilots",
+      "slug": "schedule-gains-across-flight-conditions",
+      "folder": "modules/16-schedule-gains-across-flight-conditions",
+      "status": "scaffolded",
+      "implementation_batch": "P16",
+      "prerequisites": [
+        "P15"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 17,
+      "id": "P17",
+      "title": "Fuse INS and GPS",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you fuse INS and GPS?",
+      "phase": 5,
+      "phase_title": "Navigation and guidance",
+      "slug": "fuse-ins-and-gps",
+      "folder": "modules/17-fuse-ins-and-gps",
+      "status": "scaffolded",
+      "implementation_batch": "P17",
+      "prerequisites": [
+        "P16"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 18,
+      "id": "P18",
+      "title": "Follow Waypoints",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you follow Waypoints?",
+      "phase": 5,
+      "phase_title": "Navigation and guidance",
+      "slug": "follow-waypoints",
+      "folder": "modules/18-follow-waypoints",
+      "status": "scaffolded",
+      "implementation_batch": "P18",
+      "prerequisites": [
+        "P17"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 19,
+      "id": "P19",
+      "title": "Implement Pursuit Guidance",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you implement Pursuit Guidance?",
+      "phase": 5,
+      "phase_title": "Navigation and guidance",
+      "slug": "implement-pursuit-guidance",
+      "folder": "modules/19-implement-pursuit-guidance",
+      "status": "scaffolded",
+      "implementation_batch": "P19",
+      "prerequisites": [
+        "P18"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 20,
+      "id": "P20",
+      "title": "Run a Dispersion Monte Carlo",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you run a Dispersion Monte Carlo?",
+      "phase": 5,
+      "phase_title": "Navigation and guidance",
+      "slug": "run-a-dispersion-monte-carlo",
+      "folder": "modules/20-run-a-dispersion-monte-carlo",
+      "status": "scaffolded",
+      "implementation_batch": "P20",
+      "prerequisites": [
+        "P19"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 21,
+      "id": "P21",
+      "title": "Define Flight-Computer I/O",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you define Flight-Computer I/O?",
+      "phase": 6,
+      "phase_title": "Flight HWIL",
+      "slug": "define-flight-computer-i-o",
+      "folder": "modules/21-define-flight-computer-i-o",
+      "status": "scaffolded",
+      "implementation_batch": "P21",
+      "prerequisites": [
+        "P20"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 22,
+      "id": "P22",
+      "title": "Inject Sensor and Bus Latency",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you inject Sensor and Bus Latency?",
+      "phase": 6,
+      "phase_title": "Flight HWIL",
+      "slug": "inject-sensor-and-bus-latency",
+      "folder": "modules/22-inject-sensor-and-bus-latency",
+      "status": "scaffolded",
+      "implementation_batch": "P22",
+      "prerequisites": [
+        "P21"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 23,
+      "id": "P23",
+      "title": "Test Fault Responses",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you test Fault Responses?",
+      "phase": 6,
+      "phase_title": "Flight HWIL",
+      "slug": "test-fault-responses",
+      "folder": "modules/23-test-fault-responses",
+      "status": "scaffolded",
+      "implementation_batch": "P23",
+      "prerequisites": [
+        "P22"
+      ],
+      "evidence_level": "none"
+    },
+    {
+      "number": 24,
+      "id": "P24",
+      "title": "Verify an End-to-End Mission",
+      "guiding_question": "What inputs, observable effects, and failure modes matter when you verify an End-to-End Mission?",
+      "phase": 6,
+      "phase_title": "Flight HWIL",
+      "slug": "verify-an-end-to-end-mission",
+      "folder": "modules/24-verify-an-end-to-end-mission",
+      "status": "scaffolded",
+      "implementation_batch": "P24",
+      "prerequisites": [
+        "P23"
+      ],
+      "evidence_level": "none"
+    }
+  ]
+}

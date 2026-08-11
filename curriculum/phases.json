@@ -1,0 +1,46 @@
+{
+  "phases": [
+    {
+      "phase": 1,
+      "title": "Point-mass flight",
+      "module_start": 1,
+      "module_end": 4,
+      "learning_goal": "Build visible, manipulable intuition for point-mass flight."
+    },
+    {
+      "phase": 2,
+      "title": "Stability and modes",
+      "module_start": 5,
+      "module_end": 8,
+      "learning_goal": "Build visible, manipulable intuition for stability and modes."
+    },
+    {
+      "phase": 3,
+      "title": "Six-degree-of-freedom simulation",
+      "module_start": 9,
+      "module_end": 12,
+      "learning_goal": "Build visible, manipulable intuition for six-degree-of-freedom simulation."
+    },
+    {
+      "phase": 4,
+      "title": "Autopilots",
+      "module_start": 13,
+      "module_end": 16,
+      "learning_goal": "Build visible, manipulable intuition for autopilots."
+    },
+    {
+      "phase": 5,
+      "title": "Navigation and guidance",
+      "module_start": 17,
+      "module_end": 20,
+      "learning_goal": "Build visible, manipulable intuition for navigation and guidance."
+    },
+    {
+      "phase": 6,
+      "title": "Flight HWIL",
+      "module_start": 21,
+      "module_end": 24,
+      "learning_goal": "Build visible, manipulable intuition for flight hwil."
+    }
+  ]
+}

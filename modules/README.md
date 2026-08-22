@@ -8,7 +8,7 @@ reviewable implementation batch. `implemented` means the complete learner slice 
 | --- | --- | --- | --- | --- |
 | P01 | 1: Point-mass flight | [Turn Bank Angle into a Flight Path](../modules/01-turn-bank-angle-into-a-flight-path/README.md) | How do bank angle and airspeed determine turn rate, radius, and load factor? | implemented |
 | P02 | 1: Point-mass flight | [Transform Between Aerospace Frames](../modules/02-transform-between-aerospace-frames/README.md) | What inputs, observable effects, and failure modes matter when you transform Between Aerospace Frames? | implemented |
-| P03 | 1: Point-mass flight | [Build an Atmosphere Model](../modules/03-build-an-atmosphere-model/README.md) | What inputs, observable effects, and failure modes matter when you build an Atmosphere Model? | scaffolded |
+| P03 | 1: Point-mass flight | [Build an Atmosphere Model](../modules/03-build-an-atmosphere-model/README.md) | What inputs, observable effects, and failure modes matter when you build an Atmosphere Model? | implemented |
 | P04 | 1: Point-mass flight | [Balance Forces in Trim](../modules/04-balance-forces-in-trim/README.md) | What inputs, observable effects, and failure modes matter when you balance Forces in Trim? | scaffolded |
 | P05 | 2: Stability and modes | [See Longitudinal Static Stability](../modules/05-see-longitudinal-static-stability/README.md) | What inputs, observable effects, and failure modes matter when you see Longitudinal Static Stability? | scaffolded |
 | P06 | 2: Stability and modes | [Excite the Short-Period and Phugoid Modes](../modules/06-excite-the-short-period-and-phugoid-modes/README.md) | What inputs, observable effects, and failure modes matter when you excite the Short-Period and Phugoid Modes? | scaffolded |

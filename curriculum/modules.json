@@ -45,12 +45,12 @@
       "phase_title": "Point-mass flight",
       "slug": "transform-between-aerospace-frames",
       "folder": "modules/02-transform-between-aerospace-frames",
-      "status": "scaffolded",
+      "status": "implemented",
       "implementation_batch": "P02",
       "prerequisites": [
         "P01"
       ],
-      "evidence_level": "none"
+      "evidence_level": "simulated"
     },
     {
       "number": 3,

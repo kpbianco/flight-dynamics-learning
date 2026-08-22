@@ -21,6 +21,7 @@ From a shell:
 ./bin/learn start
 ./bin/learn start P01
 ./bin/learn start P02
+./bin/learn start P03
 ./bin/learn list
 ./bin/learn status
 ```
@@ -36,11 +37,13 @@ In MATLAB:
 ```matlab
 launch_lesson("P01")
 launch_lesson("P02")
+launch_lesson("P03")
 run_module_checks("P01")
 run_module_checks("P02")
+run_module_checks("P03")
 ```
 
-`P01` remains the reference implementation, and `P02` is the implemented frame-transform lesson. Implemented modules always form a contiguous prefix; `curriculum/modules.json` is authoritative as later governed batches advance that frontier. Scaffolded modules remain intentionally non-runnable until their own bounded batch is complete.
+`P01` remains the reference implementation, `P02` is the implemented frame-transform lesson, and `P03` is the implemented atmosphere-model lesson. Implemented modules always form a contiguous prefix; `curriculum/modules.json` is authoritative as later governed batches advance that frontier. Scaffolded modules remain intentionally non-runnable until their own bounded batch is complete.
 
 ## Module layout
 

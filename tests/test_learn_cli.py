@@ -71,8 +71,8 @@ class LearnCliTests(unittest.TestCase):
             self.manifest["module_count"],
         )
 
-    def test_permanently_implemented_p01_and_p02_start(self):
-        for module_id in ("P01", "P02"):
+    def test_permanently_implemented_p01_through_p03_start_and_check(self):
+        for module_id in ("P01", "P02", "P03"):
             with self.subTest(module=module_id):
                 result = self.run_cli("start", module_id)
                 self.assertEqual(result.returncode, 0, result.stderr)
@@ -80,9 +80,9 @@ class LearnCliTests(unittest.TestCase):
                 self.assertIn("Status: implemented", result.stdout)
                 self.assertIn("Guiding question:", result.stdout)
 
-        check = self.run_cli("check", "P02")
-        self.assertEqual(check.returncode, 0, check.stderr)
-        self.assertIn("run_module_checks('P02')", check.stdout)
+                check = self.run_cli("check", module_id)
+                self.assertEqual(check.returncode, 0, check.stderr)
+                self.assertIn(f"run_module_checks('{module_id}')", check.stdout)
 
     def test_current_frontier_scaffold_refuses(self):
         scaffolded = next(

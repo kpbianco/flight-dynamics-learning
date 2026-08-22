@@ -2,7 +2,7 @@
 
 **Track:** Flight Dynamics and Aerospace GNC  
 **Phase 1:** Point-mass flight  
-**Status:** scaffolded
+**Status:** implemented
 
 ## Guiding question
 
@@ -10,28 +10,34 @@ What inputs, observable effects, and failure modes matter when you transform Bet
 
 ## Physical mental model
 
-Start from a concrete system, measurement, or decision. Change one parameter at a time and connect every visible change to a physical or computational cause.
+A velocity vector is one physical arrow, but its three coordinates depend on the axes used to describe it. This module starts with aircraft air-relative speed and the wind angles angle of attack and sideslip, forms body-axis components, and then uses roll, pitch, and yaw to express that same vector in right-handed North-East-Down coordinates. A valid direction cosine matrix preserves length; direction and known-sign cases reveal whether it was applied the right way.
 
-## Required learning flow
+## Learning flow
 
-1. Establish a deterministic baseline.
-2. Show at least two complementary plots or views.
-3. Expose meaningful parameters as MATLAB controls or clearly editable Live Editor variables.
-4. Sweep two parameters independently.
-5. Include one deliberately broken or misleading case.
-6. Ask one observation question at a time.
-7. Finish with a teach-back and a deterministic check.
+1. Read the body, wind, and North-East-Down conventions.
+2. Visualize the deterministic baseline in body and NED views.
+3. Sweep yaw alone and observe the North/East redistribution.
+4. Reset, sweep sideslip alone, and observe body lateral velocity and track.
+5. Read the matrix mechanism behind both changed views.
+6. Deliberately transpose the forward transform and diagnose a direction error that a norm check misses.
+7. Run independent numerical checks and give a two-sentence teach-back.
 
-## Implementation contract
+## Run
 
-The completed module owns these files:
+From MATLAB with the repository root as the current folder:
 
-- `lesson.m` — notebook-style MATLAB sections (`%%`) and concise narrative.
-- `interactive.m` — `uifigure` controls, plots, and immediate feedback.
-- `model.m` — deterministic calculations separated from presentation.
-- `experiment.m` — reproducible baseline, sweeps, and broken case.
-- `lesson.md` — tutor-facing explanation and misconceptions.
-- `walkthrough.md` — expected observations in order.
-- `checks.md` and `run_checks.m` — conceptual and numerical completion checks.
+```matlab
+launch_lesson("P02")
+run_module_checks("P02")
+```
 
-Prefer base MATLAB. Optional toolbox comparisons may be added only after the underlying operation is visible.
+The implementation uses base MATLAB only. Its fixed 3-by-3 calculations contain no random inputs, file I/O, network access, or toolbox frame-transform helpers. `velocityNed_mps` remains aircraft air-relative velocity expressed in NED axes; this module does not add atmospheric wind or compute ground velocity.
+
+## Files
+
+- `lesson.m` — sectioned entry point and concise concept narrative.
+- `model.m` — deterministic wind-to-body and body-to-NED calculations.
+- `experiment.m` — baseline, yaw and sideslip sweeps, metrics, and broken transform.
+- `interactive.m` — speed, wind-angle, and attitude controls with immediate views.
+- `lesson.md` and `walkthrough.md` — tutor dialogue and observation order.
+- `checks.md` and `run_checks.m` — interpretation prompts and independent invariants.

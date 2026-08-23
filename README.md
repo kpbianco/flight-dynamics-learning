@@ -31,6 +31,7 @@ From a shell:
 ./bin/learn start P10
 ./bin/learn start P11
 ./bin/learn start P12
+./bin/learn start P13
 ./bin/learn list
 ./bin/learn status
 ```
@@ -56,6 +57,7 @@ launch_lesson("P09")
 launch_lesson("P10")
 launch_lesson("P11")
 launch_lesson("P12")
+launch_lesson("P13")
 run_module_checks("P01")
 run_module_checks("P02")
 run_module_checks("P03")
@@ -68,9 +70,10 @@ run_module_checks("P09")
 run_module_checks("P10")
 run_module_checks("P11")
 run_module_checks("P12")
+run_module_checks("P13")
 ```
 
-`P01` remains the reference implementation; `P02` through `P12` are implemented lessons spanning
+`P01` remains the reference implementation; `P02` through `P13` are implemented lessons spanning
 frame transforms, atmosphere, point-mass force trim, longitudinal static stability, and the
 longitudinal and lateral-directional modes into nonlinear rigid-body propagation. P06 turns P05's restoring-moment slope into a transparent reduced-order
 time response with explicit inertia and damping, separate fast/slow views, two independent damping
@@ -94,6 +97,14 @@ sweeps body-forward non-gravity specific force and heading, verifies frame-invar
 energy, and power, closes mechanical-energy change to accumulated work, and exposes the false
 energy residual created by treating positive NED Down as positive height. The P11-to-P12 link is
 also conceptual; P12 does not consume P11 sensor histories or introduce estimation or control.
+P13 begins the autopilot phase with a transparent cascaded altitude/pitch hold. It maps the P12
+`h=-Down` convention through an outer altitude-to-pitch gain, a scheduled inner pitch response, a
+separate first-order flight-path lag, and fixed-step altitude kinematics. Independent sweeps expose
+outer-gain capture/overshoot/saturation and inner-loop tracking/control-demand trades. A broken
+command-minus-measurement Down sign reverses only outer feedback; despite command saturation,
+altitude error is still growing at the end of the fixed 30 s trace.
+The model is a fixed-speed reduced-order teaching system, not a P10/P12 adapter, identified aircraft,
+energy-closure model, P15 speed controller, or flight-control validation artifact.
 Implemented modules always form a contiguous prefix;
 `curriculum/modules.json` is authoritative as later governed batches advance that frontier.
 Scaffolded modules remain intentionally non-runnable until their own bounded batch is complete.

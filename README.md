@@ -25,6 +25,7 @@ From a shell:
 ./bin/learn start P04
 ./bin/learn start P05
 ./bin/learn start P06
+./bin/learn start P07
 ./bin/learn list
 ./bin/learn status
 ```
@@ -44,19 +45,23 @@ launch_lesson("P03")
 launch_lesson("P04")
 launch_lesson("P05")
 launch_lesson("P06")
+launch_lesson("P07")
 run_module_checks("P01")
 run_module_checks("P02")
 run_module_checks("P03")
 run_module_checks("P04")
 run_module_checks("P05")
 run_module_checks("P06")
+run_module_checks("P07")
 ```
 
-`P01` remains the reference implementation; `P02` through `P06` are implemented lessons spanning
+`P01` remains the reference implementation; `P02` through `P07` are implemented lessons spanning
 frame transforms, atmosphere, point-mass force trim, longitudinal static stability, and the
-short-period/phugoid modes. P06 turns P05's restoring-moment slope into a transparent reduced-order
+longitudinal and lateral-directional modes. P06 turns P05's restoring-moment slope into a transparent reduced-order
 time response with explicit inertia and damping, separate fast/slow views, two independent damping
-sweeps, and a broken damping sign. Implemented modules always form a contiguous prefix;
+sweeps, and a broken damping sign. P07 contrasts fast roll subsidence, slow spiral motion, and
+oscillatory Dutch roll using isolated pulse/release experiments, two independent shaping sweeps, and
+a deliberately reversed spiral-stability sign. Implemented modules always form a contiguous prefix;
 `curriculum/modules.json` is authoritative as later governed batches advance that frontier.
 Scaffolded modules remain intentionally non-runnable until their own bounded batch is complete.
 

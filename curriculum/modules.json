@@ -125,12 +125,12 @@
       "phase_title": "Stability and modes",
       "slug": "excite-roll-spiral-and-dutch-roll-modes",
       "folder": "modules/07-excite-roll-spiral-and-dutch-roll-modes",
-      "status": "scaffolded",
+      "status": "implemented",
       "implementation_batch": "P07",
       "prerequisites": [
         "P06"
       ],
-      "evidence_level": "none"
+      "evidence_level": "simulated"
     },
     {
       "number": 8,

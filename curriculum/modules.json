@@ -301,12 +301,12 @@
       "phase_title": "Navigation and guidance",
       "slug": "follow-waypoints",
       "folder": "modules/18-follow-waypoints",
-      "status": "scaffolded",
+      "status": "implemented",
       "implementation_batch": "P18",
       "prerequisites": [
         "P17"
       ],
-      "evidence_level": "none"
+      "evidence_level": "simulated"
     },
     {
       "number": 19,

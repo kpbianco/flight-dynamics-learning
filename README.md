@@ -36,6 +36,7 @@ From a shell:
 ./bin/learn start P15
 ./bin/learn start P16
 ./bin/learn start P17
+./bin/learn start P18
 ./bin/learn list
 ./bin/learn status
 ```
@@ -66,6 +67,7 @@ launch_lesson("P14")
 launch_lesson("P15")
 launch_lesson("P16")
 launch_lesson("P17")
+launch_lesson("P18")
 run_module_checks("P01")
 run_module_checks("P02")
 run_module_checks("P03")
@@ -83,9 +85,10 @@ run_module_checks("P14")
 run_module_checks("P15")
 run_module_checks("P16")
 run_module_checks("P17")
+run_module_checks("P18")
 ```
 
-`P01` remains the reference implementation; `P02` through `P17` are implemented lessons spanning
+`P01` remains the reference implementation; `P02` through `P18` are implemented lessons spanning
 frame transforms, atmosphere, point-mass force trim, longitudinal static stability, and the
 longitudinal and lateral-directional modes into nonlinear rigid-body propagation. P06 turns P05's restoring-moment slope into a transparent reduced-order
 time response with explicit inertia and damping, separate fast/slow views, two independent damping
@@ -146,6 +149,12 @@ from measurement-error injection. A broken accept-all mode uses the identical se
 admits a fixed `+80 m` outlier, producing a causal position and velocity jump. P17 does not consume
 P16/P12/P11 runtime arrays and is not an attitude mechanization, covariance filter, receiver,
 navigation-integrity result, identified vehicle, or flight-validation artifact.
+P18 turns an ideal P17-style North/East position into an ordered stationary-waypoint route. It uses
+`atan2(Delta East,Delta North)` for course clockwise from North, a shortest circular course error,
+a bounded fixed-speed course response, and an inclusive arrival circle. Independent arrival-radius
+and response-gain sweeps separate switching geometry from turn authority; a deliberately swapped
+North/East bearing sends the vehicle toward the wrong cardinal direction. P18 consumes no P17
+runtime arrays and does not implement P19's moving-target pursuit, lead, or intercept problem.
 Implemented modules always form a contiguous prefix;
 `curriculum/modules.json` is authoritative as later governed batches advance that frontier.
 Scaffolded modules remain intentionally non-runnable until their own bounded batch is complete.

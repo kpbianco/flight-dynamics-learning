@@ -33,6 +33,7 @@ From a shell:
 ./bin/learn start P12
 ./bin/learn start P13
 ./bin/learn start P14
+./bin/learn start P15
 ./bin/learn list
 ./bin/learn status
 ```
@@ -60,6 +61,7 @@ launch_lesson("P11")
 launch_lesson("P12")
 launch_lesson("P13")
 launch_lesson("P14")
+launch_lesson("P15")
 run_module_checks("P01")
 run_module_checks("P02")
 run_module_checks("P03")
@@ -74,9 +76,10 @@ run_module_checks("P11")
 run_module_checks("P12")
 run_module_checks("P13")
 run_module_checks("P14")
+run_module_checks("P15")
 ```
 
-`P01` remains the reference implementation; `P02` through `P14` are implemented lessons spanning
+`P01` remains the reference implementation; `P02` through `P15` are implemented lessons spanning
 frame transforms, atmosphere, point-mass force trim, longitudinal static stability, and the
 longitudinal and lateral-directional modes into nonlinear rigid-body propagation. P06 turns P05's restoring-moment slope into a transparent reduced-order
 time response with explicit inertia and damping, separate fast/slow views, two independent damping
@@ -112,9 +115,15 @@ coordinated level-turn relation `psi_dot=g*tan(phi)/V`. Independent sweeps expos
 gain/authority and roll-speed/acceleration trades. A broken raw subtraction interprets the
 `+170 deg` to `-170 deg` command as `-340 deg`, saturates left bank, and is still turning the long
 way at the end of the fixed `60 s` trace while independently computed shortest error grows.
-Both autopilot models are fixed-speed reduced-order teaching systems, not P10/P12/P13 adapters,
-identified aircraft, energy-closure models, P15 speed controllers, or flight-control validation
-artifacts.
+P13 and P14 are fixed-speed reduced-order teaching systems, not P10/P12/P13 adapters, identified
+aircraft, energy-closure models, or flight-control validation artifacts. P15 then makes true
+airspeed a state: exact teaching-model drag feedforward plus speed-error corrective force commands
+bounded thrust, a normalized first-order throttle lag delivers it, and thrust minus drag accelerates
+the mass. Independent speed-gain and throttle-time-constant sweeps expose capture-authority and
+delivery-rate trades. Reversed feedback commands idle after a positive speed step, so speed keeps
+falling and proper error keeps growing through the fixed `30 s` horizon. P15 remains a straight,
+level, fixed-condition teaching model—not an engine deck, P10 adapter, gain schedule, identified
+aircraft, or flight-control validation artifact.
 Implemented modules always form a contiguous prefix;
 `curriculum/modules.json` is authoritative as later governed batches advance that frontier.
 Scaffolded modules remain intentionally non-runnable until their own bounded batch is complete.

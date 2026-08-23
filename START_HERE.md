@@ -1,7 +1,7 @@
 # Start here
 
 This is the Flight Dynamics and Aerospace GNC interactive MATLAB track. Run `./bin/learn status`, then
-`./bin/learn start`. P01 is the reference slice; P02 through P14 are the implemented aerospace-frame,
+`./bin/learn start`. P01 is the reference slice; P02 through P15 are the implemented aerospace-frame,
 atmosphere-model, point-mass force-trim, longitudinal-static-stability, longitudinal-mode, and
 lateral-directional-mode lessons, followed by complete nonlinear rigid-body 6-DOF integration and
 transparent actuator lag, rate-limit, and position-envelope modeling. P11 adds deterministic
@@ -18,6 +18,12 @@ transparent roll loop moves bank, and fixed-speed coordinated-turn kinematics mo
 heading. Its independent gain/frequency sweeps, zero-gain limit, and raw-angle-subtraction failure
 make bank authority, acceleration demand, and the `+/-180 deg` branch cut visible without claiming
 wind, yaw-coupling, actuator, sensor, or full-aircraft fidelity.
+P15 releases P14's fixed-speed boundary in a separate straight-and-level teaching model. A
+speed-error gain commands drag feedforward plus bounded corrective thrust, a normalized first-order
+throttle lag separates request from delivery, and thrust minus drag advances true airspeed. Its
+independent gain and lag sweeps, exact zero-gain trim limit, and reversed-feedback idle-thrust
+failure expose authority, response-rate, and positive-feedback behavior without claiming an engine
+deck, identified aircraft, gain schedule, or flight-control validation.
 `curriculum/modules.json` records the contiguous implementation frontier as later modules advance
 through one-to-one Portfolio Control batches. A learner session follows read → visualize → move one
 lever → visualize the change → read/explain, then a broken case, checks, and teach-back.

@@ -1,11 +1,229 @@
 %% P06 - Excite the Short-Period and Phugoid Modes
-% This module is curriculum-scaffolded but not implemented yet.
-%
-% Required read-visualize-lever-visualize-read build sequence:
-% 1. read a concise mental model and establish a deterministic baseline
-% 2. visualize at least two complementary outputs with labels and units
-% 3. move one meaningful lever and visualize its isolated effect
-% 4. reset, move a second independent lever, and visualize the tradeoff
-% 5. read/explain the mechanism, then break one named assumption
-% 6. finish with numerical checks and a short teach-back
-error('P06 is scaffolded. Activate its governed implementation batch before tutor use.');
+% Guiding question:
+% What inputs, observable effects, and failure modes matter when you excite the Short-Period and Phugoid Modes?
+% Replace only figures owned by this module; preserve unrelated work.
+lessonFigures=findall(groot,'Type','figure','-regexp','Name','^P06 ');
+if ~isempty(lessonFigures)
+    close(lessonFigures);
+end
+clc; clear model;
+
+%% Read - restoring stiffness starts motion, damping decides whether it fades
+% P05 showed C_m_alpha=-1.1324 /rad at its reference CG, so a positive
+% alpha perturbation initially creates a nose-down restoring moment. That
+% static tendency does not supply inertia or damping. P06 adds those
+% declared teaching assumptions and keeps the fast and slow modes separate.
+disp('P05 supplied restoring stiffness, not a guarantee of dynamic damping.');
+disp(['Predict once: after a brief trailing-edge-up elevator pulse, which observable ' ...
+    'changes first - angle of attack or the long-period speed/altitude exchange?']);
+
+%% Baseline - excite both modes with bounded deterministic inputs
+baseline=model(-2,5,0.35,0.08);
+fprintf(['Baseline inputs: elevator pulse=%+.1f deg for %.2f s; ' ...
+    'airspeed kick=%+.1f m/s; zeta_sp=%.2f; zeta_ph=%.2f\n'], ...
+    baseline.elevatorPulse_deg,baseline.elevatorPulseDuration_s, ...
+    baseline.airspeedKick_mps,baseline.shortPeriodDampingRatio, ...
+    baseline.phugoidDampingRatio);
+fprintf(['P05 reference: qbar=%.2f Pa; static margin=%.3f%% MAC; ' ...
+    'C_m_alpha=%.4f /rad; C_m_delta_e=%.4f /rad\n'], ...
+    baseline.referenceDynamicPressure_Pa, ...
+    baseline.referenceStaticMargin_percentMAC, ...
+    baseline.pitchingMomentSlope_perRad, ...
+    baseline.elevatorControlDerivative_perRad);
+fprintf(['Short period: omega_n=%.4f rad/s; T_d=%.3f s; ' ...
+    'peak |delta alpha|=%.3f deg; peak |q|=%.3f deg/s\n'], ...
+    baseline.shortPeriodNaturalFrequency_rad_s, ...
+    baseline.shortPeriodDampedPeriod_s, ...
+    baseline.shortPeriodPeakAlpha_deg, ...
+    baseline.shortPeriodPeakPitchRate_deg_s);
+fprintf(['Phugoid: omega_n=%.4f rad/s; T_d=%.3f s; ' ...
+    'peak |gamma|=%.3f deg; altitude range=%.3f m\n'], ...
+    baseline.phugoidNaturalFrequency_rad_s, ...
+    baseline.phugoidDampedPeriod_s, ...
+    baseline.phugoidPeakFlightPathAngle_deg, ...
+    baseline.phugoidAltitudeRange_m);
+fprintf('Time-scale separation: T_ph/T_sp=%.2f.\n',baseline.modePeriodRatio);
+assert(baseline.isWithinShortPeriodLinearRange, ...
+    'The normal baseline must remain inside the inherited +/-5 deg alpha domain.');
+
+%% Baseline fast view - short-period angle of attack and pitch rate
+figure('Name','P06 deterministic short-period baseline');
+subplot(1,2,1);
+plot(baseline.fastTime_s,baseline.shortPeriodAlpha_deg,'LineWidth',1.6); hold on;
+plot(baseline.fastTime_s,baseline.shortPeriodAlphaEnvelope_deg,'k--');
+plot(baseline.fastTime_s,-baseline.shortPeriodAlphaEnvelope_deg,'k--');
+grid on; xlabel('Time after elevator pulse (s)');
+ylabel('Angle-of-attack perturbation, delta alpha (deg)');
+legend({'delta alpha','positive envelope','negative envelope'},'Location','best');
+title('Fast restoring oscillation');
+subplot(1,2,2);
+plot(baseline.fastTime_s,baseline.shortPeriodPitchRate_deg_s, ...
+    'LineWidth',1.6); hold on;
+plot(baseline.fastTime_s,zeros(size(baseline.fastTime_s)),'k--');
+grid on; xlabel('Time after elevator pulse (s)');
+ylabel('Pitch rate q (deg/s)');
+title('Pitch rate leads the alpha displacement');
+
+%% Baseline slow view - phugoid exchanges speed and height
+figure('Name','P06 deterministic phugoid baseline');
+subplot(1,3,1);
+plot(baseline.slowTime_s,baseline.phugoidSpeedPerturbation_mps, ...
+    'LineWidth',1.6); hold on;
+plot(baseline.slowTime_s,zeros(size(baseline.slowTime_s)),'k--');
+grid on; xlabel('Time after airspeed kick (s)');
+ylabel('Airspeed perturbation, delta V (m/s)');
+title('Slow kinetic-energy exchange');
+subplot(1,3,2);
+plot(baseline.slowTime_s,baseline.phugoidFlightPathAngle_deg, ...
+    'LineWidth',1.6); hold on;
+plot(baseline.slowTime_s,zeros(size(baseline.slowTime_s)),'k--');
+grid on; xlabel('Time after airspeed kick (s)');
+ylabel('Flight-path angle perturbation, gamma (deg)');
+title('Path angle is phase shifted from speed');
+subplot(1,3,3);
+plot(baseline.slowTime_s,baseline.phugoidAltitudeFromInitial_m, ...
+    'LineWidth',1.6);
+grid on; xlabel('Time after airspeed kick (s)');
+ylabel('Altitude change from initial state (m)');
+title('Speed trades with potential energy');
+
+%% Lever 1 - sweep short-period damping with the phugoid fixed
+shortPeriodDampingSweep=[0.10 0.20 0.35 0.50 0.65];
+shortPeriodAlphaSweep_deg=zeros(numel(shortPeriodDampingSweep), ...
+    baseline.fastSampleCount);
+shortPeriodDecaySweep=zeros(size(shortPeriodDampingSweep));
+shortPeriodPeriodSweep_s=zeros(size(shortPeriodDampingSweep));
+for k=1:numel(shortPeriodDampingSweep)
+    sample=model(-2,5,shortPeriodDampingSweep(k),0.08);
+    shortPeriodAlphaSweep_deg(k,:)=sample.shortPeriodAlpha_deg;
+    shortPeriodDecaySweep(k)=sample.shortPeriodDecayPerPeriod_ratio;
+    shortPeriodPeriodSweep_s(k)=sample.shortPeriodDampedPeriod_s;
+    assert(isequaln(sample.phugoidSpeedPerturbation_mps, ...
+        baseline.phugoidSpeedPerturbation_mps) && ...
+        isequaln(sample.phugoidSpeedRate_mps2, ...
+        baseline.phugoidSpeedRate_mps2) && ...
+        isequaln(sample.phugoidFlightPathAngle_deg, ...
+        baseline.phugoidFlightPathAngle_deg) && ...
+        isequaln(sample.phugoidAltitudeFromInitial_m, ...
+        baseline.phugoidAltitudeFromInitial_m) && ...
+        sample.phugoidDampedPeriod_s==baseline.phugoidDampedPeriod_s && ...
+        sample.phugoidDecayPerPeriod_ratio== ...
+        baseline.phugoidDecayPerPeriod_ratio, ...
+        'Short-period damping sweep must not change the phugoid response.');
+end
+
+%% Changed view - short-period damping changes the fast envelope alone
+figure('Name','P06 short-period damping sweep');
+subplot(1,2,1);
+plot(baseline.fastTime_s,shortPeriodAlphaSweep_deg,'LineWidth',1.2);
+grid on; xlabel('Time after elevator pulse (s)');
+ylabel('Angle-of-attack perturbation, delta alpha (deg)');
+legend(compose('zeta_s_p = %.2f',shortPeriodDampingSweep), ...
+    'Location','best');
+title('Short-period damping sweep');
+subplot(1,2,2);
+plot(shortPeriodDampingSweep,shortPeriodDecaySweep,'o-','LineWidth',1.5);
+grid on; xlabel('Short-period damping ratio zeta_s_p (-)');
+ylabel('Envelope ratio after one damped period (-)');
+title('More damping removes more amplitude per cycle');
+fprintf(['Short-period sweep: decay-per-cycle falls from %.4f to %.4f; ' ...
+    'T_d changes from %.3f to %.3f s.\n'],shortPeriodDecaySweep(1), ...
+    shortPeriodDecaySweep(end),shortPeriodPeriodSweep_s(1), ...
+    shortPeriodPeriodSweep_s(end));
+
+%% Read and explain - mechanism for lever 1
+disp(['Mechanism: the P05 restoring derivative and the declared inertia set omega_n. ' ...
+    'Changing zeta_sp changes only the exponential envelope and damped frequency; ' ...
+    'it does not alter the independently fixed phugoid.']);
+
+%% Lever 2 - reset short-period damping, then sweep phugoid damping
+phugoidDampingSweep=[0.00 0.04 0.08 0.12 0.20];
+phugoidSpeedSweep_mps=zeros(numel(phugoidDampingSweep), ...
+    baseline.slowSampleCount);
+phugoidDecaySweep=zeros(size(phugoidDampingSweep));
+phugoidPeriodSweep_s=zeros(size(phugoidDampingSweep));
+for k=1:numel(phugoidDampingSweep)
+    sample=model(-2,5,0.35,phugoidDampingSweep(k));
+    phugoidSpeedSweep_mps(k,:)=sample.phugoidSpeedPerturbation_mps;
+    phugoidDecaySweep(k)=sample.phugoidDecayPerPeriod_ratio;
+    phugoidPeriodSweep_s(k)=sample.phugoidDampedPeriod_s;
+    assert(isequaln(sample.shortPeriodAlpha_deg, ...
+        baseline.shortPeriodAlpha_deg) && ...
+        isequaln(sample.shortPeriodPitchRate_deg_s, ...
+        baseline.shortPeriodPitchRate_deg_s) && ...
+        isequaln(sample.shortPeriodAlphaEnvelope_deg, ...
+        baseline.shortPeriodAlphaEnvelope_deg) && ...
+        sample.shortPeriodDampedPeriod_s== ...
+        baseline.shortPeriodDampedPeriod_s && ...
+        sample.shortPeriodDecayPerPeriod_ratio== ...
+        baseline.shortPeriodDecayPerPeriod_ratio, ...
+        'Phugoid damping sweep must not change the short-period response.');
+end
+
+%% Changed view - phugoid damping changes the slow envelope alone
+figure('Name','P06 phugoid damping sweep');
+subplot(1,2,1);
+plot(baseline.slowTime_s,phugoidSpeedSweep_mps,'LineWidth',1.2);
+grid on; xlabel('Time after airspeed kick (s)');
+ylabel('Airspeed perturbation, delta V (m/s)');
+legend(compose('zeta_p_h = %.2f',phugoidDampingSweep), ...
+    'Location','best');
+title('Phugoid damping sweep');
+subplot(1,2,2);
+plot(phugoidDampingSweep,phugoidDecaySweep,'s-','LineWidth',1.5);
+grid on; xlabel('Phugoid damping ratio zeta_p_h (-)');
+ylabel('Envelope ratio after one damped period (-)');
+title('Zero damping preserves amplitude');
+fprintf(['Phugoid sweep: decay-per-cycle falls from %.4f to %.4f; ' ...
+    'T_d changes from %.3f to %.3f s.\n'],phugoidDecaySweep(1), ...
+    phugoidDecaySweep(end),phugoidPeriodSweep_s(1), ...
+    phugoidPeriodSweep_s(end));
+
+%% Read and explain - mechanism for lever 2
+disp(['Mechanism: lift''s V^2 sensitivity, gravity, and the 60 m/s reference set ' ...
+    'the slow phugoid frequency. ' ...
+    'Changing zeta_ph controls decay of the speed/path exchange while the reset ' ...
+    'short-period response remains identical.']);
+
+%% Broken case - reverse the damping sign while keeping restoring stiffness
+% The normal API rejects negative damping. This isolated broken calculation
+% changes exp(-zeta*omega*t) to exp(+zeta*omega*t). The frequency and P05
+% restoring stiffness remain unchanged, but the envelope grows every cycle
+% and quickly leaves the +/-5 deg linear learning domain. That growth is a
+% failure symptom, not a large-angle aircraft prediction.
+brokenWindow=baseline.fastTime_s<=2.5;
+brokenTime_s=baseline.fastTime_s(brokenWindow);
+brokenShortPeriodAlpha_deg=baseline.initialPitchRate_rad_s/ ...
+    baseline.shortPeriodDampedFrequency_rad_s.* ...
+    exp(+baseline.shortPeriodDecayRate_per_s*brokenTime_s).* ...
+    sin(baseline.shortPeriodDampedFrequency_rad_s*brokenTime_s)*180/pi;
+correctWindowAlpha_deg=baseline.shortPeriodAlpha_deg(brokenWindow);
+correctWindowPeak_deg=max(abs(correctWindowAlpha_deg));
+brokenWindowPeak_deg=max(abs(brokenShortPeriodAlpha_deg));
+
+figure('Name','P06 broken damping sign');
+subplot(1,2,1);
+plot(brokenTime_s,correctWindowAlpha_deg,'LineWidth',1.6); hold on;
+plot(brokenTime_s,brokenShortPeriodAlpha_deg,'--','LineWidth',1.6);
+plot(brokenTime_s,zeros(size(brokenTime_s)),'k:');
+grid on; xlabel('Time after elevator pulse (s)');
+ylabel('Angle-of-attack perturbation, delta alpha (deg)');
+legend({'correct positive damping','broken negative damping','zero'}, ...
+    'Location','best');
+title('Restoring stiffness does not prevent growth');
+subplot(1,2,2);
+bar([correctWindowPeak_deg brokenWindowPeak_deg]); grid on;
+set(gca,'XTickLabel',{'correct','broken'});
+ylabel('Peak |delta alpha| in first 2.5 s (deg)');
+title('Wrong damping sign creates divergence');
+fprintf(['Broken symptom: peak |delta alpha| grows from %.3f to %.3f deg ' ...
+    'even though omega_n remains %.4f rad/s.\n'],correctWindowPeak_deg, ...
+    brokenWindowPeak_deg,baseline.shortPeriodNaturalFrequency_rad_s);
+assert(brokenWindowPeak_deg>20*correctWindowPeak_deg, ...
+    'The broken damping sign must create unmistakable short-period growth.');
+
+%% Check and teach back
+clear run_checks;
+run_checks;
+disp(['Teach back in two sentences: identify which input and observable expose each mode; ' ...
+    'then explain why restoring stiffness plus the wrong damping sign still diverges.']);

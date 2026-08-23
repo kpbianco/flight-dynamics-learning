@@ -1,7 +1,7 @@
 # Start here
 
 This is the Flight Dynamics and Aerospace GNC interactive MATLAB track. Run `./bin/learn status`, then
-`./bin/learn start`. P01 is the reference slice; P02 through P16 are the implemented aerospace-frame,
+`./bin/learn start`. P01 is the reference slice; P02 through P17 are the implemented aerospace-frame,
 atmosphere-model, point-mass force-trim, longitudinal-static-stability, longitudinal-mode, and
 lateral-directional-mode lessons, followed by complete nonlinear rigid-body 6-DOF integration and
 transparent actuator lag, rate-limit, and position-envelope modeling. P11 adds deterministic
@@ -31,6 +31,13 @@ equal-dynamic-pressure comparison isolates a broken true-airspeed-only lookup th
 selects gains that are too small for the unchanged plant. The result is a bounded frozen-condition
 teaching model, not an aircraft gain schedule, robustness proof, certification artifact, or P14/P15
 runtime adapter.
+P17 then opens navigation with a fixed-work North-axis fusion model. A gravity-compensated INS
+acceleration prediction runs at `50 Hz`; deterministic one-Hz GPS position fixes create visible
+innovations, gate decisions, and alpha-beta position/velocity corrections. Independent residual
+INS-bias and nominal GPS-error sweeps expose drift versus measurement injection, while a broken
+accept-all gate admits the same fixed outlier that correct mode rejects. The lesson is not a P16,
+P12, or P11 runtime adapter, a full attitude/INS mechanization, a covariance filter, receiver
+integrity evidence, or aircraft navigation validation.
 `curriculum/modules.json` records the contiguous implementation frontier as later modules advance
 through one-to-one Portfolio Control batches. A learner session follows read → visualize → move one
 lever → visualize the change → read/explain, then a broken case, checks, and teach-back.

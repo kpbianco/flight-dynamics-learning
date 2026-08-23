@@ -35,6 +35,7 @@ From a shell:
 ./bin/learn start P14
 ./bin/learn start P15
 ./bin/learn start P16
+./bin/learn start P17
 ./bin/learn list
 ./bin/learn status
 ```
@@ -64,6 +65,7 @@ launch_lesson("P13")
 launch_lesson("P14")
 launch_lesson("P15")
 launch_lesson("P16")
+launch_lesson("P17")
 run_module_checks("P01")
 run_module_checks("P02")
 run_module_checks("P03")
@@ -80,9 +82,10 @@ run_module_checks("P13")
 run_module_checks("P14")
 run_module_checks("P15")
 run_module_checks("P16")
+run_module_checks("P17")
 ```
 
-`P01` remains the reference implementation; `P02` through `P16` are implemented lessons spanning
+`P01` remains the reference implementation; `P02` through `P17` are implemented lessons spanning
 frame transforms, atmosphere, point-mass force trim, longitudinal static stability, and the
 longitudinal and lateral-directional modes into nonlinear rigid-body propagation. P06 turns P05's restoring-moment slope into a transparent reduced-order
 time response with explicit inertia and damping, separate fast/slow views, two independent damping
@@ -135,6 +138,14 @@ true-airspeed-only lookup is exposed with two conditions that have equal actual 
 the wrong lookup omits density, clamps to the high table endpoint, and produces a slower,
 less-damped response even though the plant is unchanged. P16 is not a P14/P15 adapter, identified
 gain schedule, robustness-margin result, certified controller, or aircraft validation artifact.
+P17 begins navigation with a transparent one-dimensional INS/GPS alpha-beta teaching filter.
+Gravity-compensated North acceleration drives a 50 Hz position/velocity prediction; one-Hz GPS
+position innovations pass through an explicit inclusive gate before fixed-gain corrections.
+Independent INS-bias and deterministic GPS-error sweeps separate integrated dead-reckoning drift
+from measurement-error injection. A broken accept-all mode uses the identical sensor stream but
+admits a fixed `+80 m` outlier, producing a causal position and velocity jump. P17 does not consume
+P16/P12/P11 runtime arrays and is not an attitude mechanization, covariance filter, receiver,
+navigation-integrity result, identified vehicle, or flight-validation artifact.
 Implemented modules always form a contiguous prefix;
 `curriculum/modules.json` is authoritative as later governed batches advance that frontier.
 Scaffolded modules remain intentionally non-runnable until their own bounded batch is complete.

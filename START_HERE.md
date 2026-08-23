@@ -1,7 +1,7 @@
 # Start here
 
 This is the Flight Dynamics and Aerospace GNC interactive MATLAB track. Run `./bin/learn status`, then
-`./bin/learn start`. P01 is the reference slice; P02 through P15 are the implemented aerospace-frame,
+`./bin/learn start`. P01 is the reference slice; P02 through P16 are the implemented aerospace-frame,
 atmosphere-model, point-mass force-trim, longitudinal-static-stability, longitudinal-mode, and
 lateral-directional-mode lessons, followed by complete nonlinear rigid-body 6-DOF integration and
 transparent actuator lag, rate-limit, and position-envelope modeling. P11 adds deterministic
@@ -24,6 +24,13 @@ throttle lag separates request from delivery, and thrust minus drag advances tru
 independent gain and lag sweeps, exact zero-gain trim limit, and reversed-feedback idle-thrust
 failure expose authority, response-rate, and positive-feedback behavior without claiming an engine
 deck, identified aircraft, gain schedule, or flight-control validation.
+P16 then replaces the fixed-condition gain assumption with a transparent dynamic-pressure lookup.
+True airspeed and density select a manually interpolated five-knot roll schedule, while independent
+condition sweeps expose nearly preserved response and changing equivalent-aileron demand. An
+equal-dynamic-pressure comparison isolates a broken true-airspeed-only lookup that omits density and
+selects gains that are too small for the unchanged plant. The result is a bounded frozen-condition
+teaching model, not an aircraft gain schedule, robustness proof, certification artifact, or P14/P15
+runtime adapter.
 `curriculum/modules.json` records the contiguous implementation frontier as later modules advance
 through one-to-one Portfolio Control batches. A learner session follows read → visualize → move one
 lever → visualize the change → read/explain, then a broken case, checks, and teach-back.

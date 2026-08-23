@@ -34,6 +34,7 @@ From a shell:
 ./bin/learn start P13
 ./bin/learn start P14
 ./bin/learn start P15
+./bin/learn start P16
 ./bin/learn list
 ./bin/learn status
 ```
@@ -62,6 +63,7 @@ launch_lesson("P12")
 launch_lesson("P13")
 launch_lesson("P14")
 launch_lesson("P15")
+launch_lesson("P16")
 run_module_checks("P01")
 run_module_checks("P02")
 run_module_checks("P03")
@@ -77,9 +79,10 @@ run_module_checks("P12")
 run_module_checks("P13")
 run_module_checks("P14")
 run_module_checks("P15")
+run_module_checks("P16")
 ```
 
-`P01` remains the reference implementation; `P02` through `P15` are implemented lessons spanning
+`P01` remains the reference implementation; `P02` through `P16` are implemented lessons spanning
 frame transforms, atmosphere, point-mass force trim, longitudinal static stability, and the
 longitudinal and lateral-directional modes into nonlinear rigid-body propagation. P06 turns P05's restoring-moment slope into a transparent reduced-order
 time response with explicit inertia and damping, separate fast/slow views, two independent damping
@@ -124,6 +127,14 @@ delivery-rate trades. Reversed feedback commands idle after a positive speed ste
 falling and proper error keeps growing through the fixed `30 s` horizon. P15 remains a straight,
 level, fixed-condition teaching model—not an engine deck, P10 adapter, gain schedule, identified
 aircraft, or flight-control validation artifact.
+P16 closes the autopilot phase with a frozen-condition roll-loop gain schedule. True airspeed and
+density form dynamic pressure, actual dynamic pressure scales transparent control effectiveness,
+and a visible five-knot table linearly interpolates roll-angle and roll-rate gains. Independent
+airspeed and density sweeps separate response consistency from equivalent-aileron demand. A broken
+true-airspeed-only lookup is exposed with two conditions that have equal actual dynamic pressure:
+the wrong lookup omits density, clamps to the high table endpoint, and produces a slower,
+less-damped response even though the plant is unchanged. P16 is not a P14/P15 adapter, identified
+gain schedule, robustness-margin result, certified controller, or aircraft validation artifact.
 Implemented modules always form a contiguous prefix;
 `curriculum/modules.json` is authoritative as later governed batches advance that frontier.
 Scaffolded modules remain intentionally non-runnable until their own bounded batch is complete.

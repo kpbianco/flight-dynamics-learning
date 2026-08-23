@@ -269,12 +269,12 @@
       "phase_title": "Autopilots",
       "slug": "schedule-gains-across-flight-conditions",
       "folder": "modules/16-schedule-gains-across-flight-conditions",
-      "status": "scaffolded",
+      "status": "implemented",
       "implementation_batch": "P16",
       "prerequisites": [
         "P15"
       ],
-      "evidence_level": "none"
+      "evidence_level": "simulated"
     },
     {
       "number": 17,

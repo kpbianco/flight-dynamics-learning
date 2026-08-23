@@ -93,12 +93,12 @@
       "phase_title": "Stability and modes",
       "slug": "see-longitudinal-static-stability",
       "folder": "modules/05-see-longitudinal-static-stability",
-      "status": "scaffolded",
+      "status": "implemented",
       "implementation_batch": "P05",
       "prerequisites": [
         "P04"
       ],
-      "evidence_level": "none"
+      "evidence_level": "simulated"
     },
     {
       "number": 6,

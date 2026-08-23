@@ -141,12 +141,12 @@
       "phase_title": "Stability and modes",
       "slug": "relate-stability-derivatives-to-motion",
       "folder": "modules/08-relate-stability-derivatives-to-motion",
-      "status": "scaffolded",
+      "status": "implemented",
       "implementation_batch": "P08",
       "prerequisites": [
         "P07"
       ],
-      "evidence_level": "none"
+      "evidence_level": "simulated"
     },
     {
       "number": 9,

@@ -28,6 +28,7 @@ From a shell:
 ./bin/learn start P07
 ./bin/learn start P08
 ./bin/learn start P09
+./bin/learn start P10
 ./bin/learn list
 ./bin/learn status
 ```
@@ -50,6 +51,7 @@ launch_lesson("P06")
 launch_lesson("P07")
 launch_lesson("P08")
 launch_lesson("P09")
+launch_lesson("P10")
 run_module_checks("P01")
 run_module_checks("P02")
 run_module_checks("P03")
@@ -59,9 +61,10 @@ run_module_checks("P06")
 run_module_checks("P07")
 run_module_checks("P08")
 run_module_checks("P09")
+run_module_checks("P10")
 ```
 
-`P01` remains the reference implementation; `P02` through `P09` are implemented lessons spanning
+`P01` remains the reference implementation; `P02` through `P10` are implemented lessons spanning
 frame transforms, atmosphere, point-mass force trim, longitudinal static stability, and the
 longitudinal and lateral-directional modes into nonlinear rigid-body propagation. P06 turns P05's restoring-moment slope into a transparent reduced-order
 time response with explicit inertia and damping, separate fast/slow views, two independent damping
@@ -72,6 +75,10 @@ derivatives through dimensional loads and state-matrix entries into coupled side
 bank-angle motion, with roll-damping and weathercock-stability sweeps plus a broken rate-normalization
 case. P09 integrates NED position, body velocity, quaternion attitude, and body rates under transparent
 force and moment pulses, with independent input sweeps and a broken rotating-frame transport term.
+P10 models the transparent first-order actuator conceptually upstream of P09's internal moment
+boundary, separates requested, feasible, and delivered deflection, sweeps lag and rate authority
+independently, and exposes an omitted position envelope that invents pitch-moment authority. The lessons do
+not provide a direct P10-to-P09 adapter.
 Implemented modules always form a contiguous prefix;
 `curriculum/modules.json` is authoritative as later governed batches advance that frontier.
 Scaffolded modules remain intentionally non-runnable until their own bounded batch is complete.

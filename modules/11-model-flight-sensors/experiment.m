@@ -1,11 +1,220 @@
 %% P11 - Model Flight Sensors
-% This module is curriculum-scaffolded but not implemented yet.
+% Guiding question:
+% What inputs, observable effects, and failure modes matter when you model Flight Sensors?
+% Replace only figures owned by this module; preserve unrelated work.
+lessonFigures=findall(groot,'Type','figure','-regexp','Name','^P11 ');
+if ~isempty(lessonFigures)
+    close(lessonFigures);
+end
+clc; clear model;
+
+%% Read - turn prescribed truth into two distinct sensor measurements
+% P10 stopped at delivered actuator authority. P11 begins downstream with
+% prescribed motion truth and exposes the observation equations:
 %
-% Required read-visualize-lever-visualize-read build sequence:
-% 1. read a concise mental model and establish a deterministic baseline
-% 2. visualize at least two complementary outputs with labels and units
-% 3. move one meaningful lever and visualize its isolated effect
-% 4. reset, move a second independent lever, and visualize the tradeoff
-% 5. read/explain the mechanism, then break one named assumption
-% 6. finish with numerical checks and a short teach-back
-error('P11 is scaffolded. Activate its governed implementation batch before tutor use.');
+% q_measured = q_truth + constant_bias
+% f_b        = C_n_to_b (a_n-g_n) + eta_b
+%
+% C_b_to_n maps body x-forward, y-right, z-down into North-East-Down.
+% Positive pitch is nose-up. P11 does not provide the missing P10-to-truth
+% adapter and does not implement fusion, control, or sensor-bus timing.
+disp('P11 separates prescribed motion truth from gyro and accelerometer measurements.');
+disp(['Predict once: after the true pitch-rate maneuver returns to zero, ' ...
+    'does a positive constant gyro bias leave zero or nonzero angle error?']);
+
+%% Baseline - fixed truth with declared sensor errors
+baseline=model(0.20,0.15);
+fprintf(['Baseline inputs: gyro bias %.2f deg/s, accelerometer error ' ...
+    'vector RMS %.2f m/s^2, sample time %.3f s, %d samples.\n'], ...
+    baseline.gyroBias_deg_s,baseline.accelerometerNoiseRms_mps2, ...
+    baseline.sampleTime_s,baseline.sampleCount);
+fprintf(['Truth: peak pitch rate %.1f deg/s, peak pitch angle %.4f deg, ' ...
+    'peak North acceleration %.1f m/s^2.\n'], ...
+    baseline.peakPitchRateTruth_deg_s,baseline.peakPitchAngleTruth_deg, ...
+    max(baseline.accelerationNED_mps2(1,:)));
+fprintf(['Sensor observables: final gyro-integrated angle error %.2f deg, ' ...
+    'measured accelerometer error vector RMS %.2f m/s^2.\n'], ...
+    baseline.finalPitchAngleError_deg, ...
+    baseline.accelerometerNoiseVectorRmsMeasured_mps2);
+assert(baseline.maxPitchAngleBiasClosure_deg<1e-11 && ...
+    baseline.maxSpecificForceEquationResidual_mps2<1e-11 && ...
+    baseline.maxDcmOrthonormalityError<1e-11 && ...
+    baseline.maxDcmDeterminantError<1e-11, ...
+    'The baseline must close bias integration, frames, and specific force.');
+
+%% Baseline view 1 - a small rate bias accumulates into angle drift
+figure('Name','P11 baseline gyro measurement');
+subplot(1,2,1);
+plot(baseline.time_s,baseline.pitchRateTruth_deg_s,'k--','LineWidth',1.4); hold on;
+plot(baseline.time_s,baseline.pitchRateMeasured_deg_s,'LineWidth',1.7);
+grid on; xlabel('Time (s)'); ylabel('Pitch rate q (deg/s)');
+legend({'truth','gyro measurement'},'Location','best');
+title('Constant gyro rate separation');
+subplot(1,2,2);
+plot(baseline.time_s,baseline.pitchAngleError_deg,'LineWidth',1.7); hold on;
+plot(baseline.time_s,baseline.expectedPitchAngleError_deg,'k--','LineWidth',1.3);
+grid on; xlabel('Time (s)'); ylabel('Pitch angle error (deg)');
+legend({'integrated measurement error','bias*time'},'Location','best');
+title('Rate bias becomes linear angle drift');
+
+%% Baseline view 2 - coordinate acceleration is not body specific force
+figure('Name','P11 baseline accelerometer specific force');
+subplot(1,2,1);
+plot(baseline.time_s,baseline.accelerationNED_mps2(1,:),'k--','LineWidth',1.5); hold on;
+plot(baseline.time_s,baseline.idealSpecificForceBody_mps2(1,:),'LineWidth',1.6);
+plot(baseline.time_s,baseline.idealSpecificForceBody_mps2(3,:),'LineWidth',1.6);
+grid on; xlabel('Time (s)'); ylabel('Acceleration or specific force (m/s^2)');
+legend({'NED North coordinate acceleration','ideal body x specific force', ...
+    'ideal body z specific force'},'Location','best');
+title('Frame rotation and gravity shape ideal output');
+subplot(1,2,2);
+plot(baseline.time_s,baseline.accelerometerNoiseBody_mps2.','LineWidth',1.1);
+grid on; xlabel('Time (s)'); ylabel('Additive body error (m/s^2)');
+legend({'body x','body y','body z'},'Location','best');
+title('Fixed zero-mean teaching error');
+
+%% Lever 1 - hold accelerometer error fixed and sweep only gyro bias
+gyroBiasSweep_deg_s=[-0.50 -0.25 0 0.25 0.50];
+gyroAngleError_deg=zeros(numel(gyroBiasSweep_deg_s),baseline.sampleCount);
+gyroFinalAngleError_deg=zeros(size(gyroBiasSweep_deg_s));
+for k=1:numel(gyroBiasSweep_deg_s)
+    sample=model(gyroBiasSweep_deg_s(k),0.15);
+    gyroAngleError_deg(k,:)=sample.pitchAngleError_deg;
+    gyroFinalAngleError_deg(k)=sample.finalPitchAngleError_deg;
+    assert(isequal(sample.pitchRateTruth_deg_s, ...
+        baseline.pitchRateTruth_deg_s) && ...
+        isequal(sample.pitchAngleTruth_deg,baseline.pitchAngleTruth_deg) && ...
+        isequal(sample.accelerationNED_mps2,baseline.accelerationNED_mps2) && ...
+        isequal(sample.idealSpecificForceBody_mps2, ...
+        baseline.idealSpecificForceBody_mps2) && ...
+        isequal(sample.accelerometerNoiseBody_mps2, ...
+        baseline.accelerometerNoiseBody_mps2) && ...
+        isequal(sample.accelerometerMeasuredBody_mps2, ...
+        baseline.accelerometerMeasuredBody_mps2), ...
+        'The gyro-bias sweep must leave truth and accelerometer histories fixed.');
+end
+
+%% Changed view - gyro bias sign and duration set accumulated angle error
+figure('Name','P11 gyro-bias sweep');
+subplot(1,2,1);
+plot(baseline.time_s,gyroAngleError_deg,'LineWidth',1.3);
+grid on; xlabel('Time (s)'); ylabel('Pitch angle error (deg)');
+legend(compose('bias %.2f deg/s',gyroBiasSweep_deg_s),'Location','best');
+title('Only constant gyro bias changes');
+subplot(1,2,2);
+plot(gyroBiasSweep_deg_s,gyroFinalAngleError_deg,'o-','LineWidth',1.5); hold on;
+plot(gyroBiasSweep_deg_s,baseline.timeHorizon_s*gyroBiasSweep_deg_s, ...
+    'k--','LineWidth',1.2);
+grid on; xlabel('Gyro bias (deg/s)'); ylabel('Final angle error (deg)');
+legend({'integrated result','bias*time horizon'},'Location','best');
+title('Eight seconds converts rate error to angle error');
+assert(max(abs(gyroFinalAngleError_deg- ...
+    baseline.timeHorizon_s*gyroBiasSweep_deg_s))<1e-11, ...
+    'The gyro-bias sweep must produce the declared linear angle drift.');
+
+%% Read and explain lever 1
+% Integration accumulates the constant rate offset at every interval. The
+% true rate can return to zero without undoing measurement error; a positive
+% bias keeps adding positive angle drift until the observation horizon ends.
+disp(['Mechanism 1: integrating a constant gyro offset produces bias*time ' ...
+    'angle error even after the true maneuver ends.']);
+
+%% Lever 2 - reset gyro bias and sweep only accelerometer error magnitude
+accelerometerRmsSweep_mps2=[0 0.05 0.15 0.30 0.50];
+accelerometerZError_mps2=zeros( ...
+    numel(accelerometerRmsSweep_mps2),baseline.sampleCount);
+observedVectorRms_mps2=zeros(size(accelerometerRmsSweep_mps2));
+for k=1:numel(accelerometerRmsSweep_mps2)
+    sample=model(0.20,accelerometerRmsSweep_mps2(k));
+    accelerometerZError_mps2(k,:)=sample.accelerometerNoiseBody_mps2(3,:);
+    observedVectorRms_mps2(k)= ...
+        sample.accelerometerNoiseVectorRmsMeasured_mps2;
+    assert(isequal(sample.pitchRateTruth_deg_s, ...
+        baseline.pitchRateTruth_deg_s) && ...
+        isequal(sample.pitchAngleTruth_deg,baseline.pitchAngleTruth_deg) && ...
+        isequal(sample.accelerationNED_mps2,baseline.accelerationNED_mps2) && ...
+        isequal(sample.idealSpecificForceBody_mps2, ...
+        baseline.idealSpecificForceBody_mps2) && ...
+        isequal(sample.pitchRateMeasured_deg_s, ...
+        baseline.pitchRateMeasured_deg_s) && ...
+        isequal(sample.pitchAngleMeasured_deg, ...
+        baseline.pitchAngleMeasured_deg), ...
+        ['The accelerometer-error sweep must leave truth, ideal force, ' ...
+        'and gyro histories fixed.']);
+end
+
+%% Changed view - one normalized waveform scales to the requested vector RMS
+figure('Name','P11 accelerometer-error sweep');
+subplot(1,2,1);
+plot(baseline.time_s,accelerometerZError_mps2,'LineWidth',1.2);
+grid on; xlabel('Time (s)'); ylabel('Body z additive error (m/s^2)');
+legend(compose('vector RMS %.2f m/s^2',accelerometerRmsSweep_mps2), ...
+    'Location','best');
+title('Only deterministic error magnitude changes');
+subplot(1,2,2);
+plot(accelerometerRmsSweep_mps2,observedVectorRms_mps2, ...
+    's-','LineWidth',1.5); hold on;
+plot(accelerometerRmsSweep_mps2,accelerometerRmsSweep_mps2, ...
+    'k--','LineWidth',1.2);
+grid on; xlabel('Requested vector RMS (m/s^2)');
+ylabel('Observed vector RMS (m/s^2)');
+legend({'deterministic error','one-to-one reference'},'Location','best');
+title('Normalization makes the lever explicit');
+assert(max(abs(observedVectorRms_mps2- ...
+    accelerometerRmsSweep_mps2))<1e-11, ...
+    'The deterministic error must have the requested vector RMS.');
+
+%% Read and explain lever 2
+% The lever multiplies one fixed, zero-mean, unit-vector-RMS waveform. It
+% changes amplitude without changing truth or gyro output. This repeatable
+% error is not a random sample, standard deviation, PSD, or hardware model.
+disp(['Mechanism 2: accelerometer RMS rescales a fixed normalized teaching ' ...
+    'error without changing truth, ideal specific force, or gyro output.']);
+
+%% Limiting cases - ideal sensor errors vanish exactly
+ideal=model(0,0);
+assert(isequal(ideal.pitchRateMeasured_deg_s, ...
+    ideal.pitchRateTruth_deg_s) && ...
+    isequal(ideal.pitchAngleMeasured_deg,ideal.pitchAngleTruth_deg) && ...
+    isequal(ideal.accelerometerMeasuredBody_mps2, ...
+    ideal.idealSpecificForceBody_mps2), ...
+    'Zero bias and zero accelerometer error must reproduce ideal measurements.');
+fprintf(['Ideal limit: final gyro angle error %.1f deg and accelerometer ' ...
+    'error vector RMS %.1f m/s^2.\n'],ideal.finalPitchAngleError_deg, ...
+    ideal.accelerometerNoiseVectorRmsMeasured_mps2);
+
+%% Deliberately broken case - omit gravity from accelerometer specific force
+figure('Name','P11 broken gravity omission');
+subplot(1,2,1);
+plot(baseline.time_s,baseline.idealSpecificForceBody_mps2(3,:), ...
+    'LineWidth',1.7); hold on;
+plot(baseline.time_s,baseline.brokenIdealSpecificForceBody_mps2(3,:), ...
+    '--','LineWidth',1.7);
+grid on; xlabel('Time (s)'); ylabel('Ideal body z specific force (m/s^2)');
+legend({'complete a-g','broken a only'},'Location','best');
+title('Omitting gravity creates false zero at rest');
+subplot(1,2,2);
+plot(baseline.time_s,baseline.gravityOmissionMagnitude_mps2, ...
+    'LineWidth',1.7); hold on;
+plot(baseline.time_s,baseline.gravity_mps2*ones(size(baseline.time_s)), ...
+    'k--','LineWidth',1.2);
+grid on; xlabel('Time (s)');
+ylabel('|complete-broken measurement| (m/s^2)');
+legend({'observed discrepancy','g reference'},'Location','best');
+title('Shared noise cancels; omitted gravity remains');
+assert(abs(baseline.idealSpecificForceBody_mps2(3,1)+ ...
+    baseline.gravity_mps2)<1e-12 && ...
+    baseline.brokenIdealSpecificForceBody_mps2(3,1)==0 && ...
+    baseline.maxGravityOmissionMagnitudeError_mps2<1e-11, ...
+    'The broken case must omit only gravity and expose the zero-at-rest symptom.');
+fprintf(['Broken symptom: supported-level ideal body-z output is %.5f rather ' ...
+    'than %.5f m/s^2; discrepancy magnitude is g at every sample.\n'], ...
+    baseline.brokenIdealSpecificForceBody_mps2(3,1), ...
+    baseline.idealSpecificForceBody_mps2(3,1));
+
+%% Check and teach back
+clear run_checks;
+run_checks;
+disp(['Teach-back: trace gyro truth and bias into angle drift, then trace NED ' ...
+    'acceleration and gravity into body specific force and diagnose the ' ...
+    'broken gravity omission.']);

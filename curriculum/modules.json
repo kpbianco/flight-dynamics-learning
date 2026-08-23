@@ -189,12 +189,12 @@
       "phase_title": "Six-degree-of-freedom simulation",
       "slug": "model-flight-sensors",
       "folder": "modules/11-model-flight-sensors",
-      "status": "scaffolded",
+      "status": "implemented",
       "implementation_batch": "P11",
       "prerequisites": [
         "P10"
       ],
-      "evidence_level": "none"
+      "evidence_level": "simulated"
     },
     {
       "number": 12,

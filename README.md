@@ -29,6 +29,7 @@ From a shell:
 ./bin/learn start P08
 ./bin/learn start P09
 ./bin/learn start P10
+./bin/learn start P11
 ./bin/learn list
 ./bin/learn status
 ```
@@ -52,6 +53,7 @@ launch_lesson("P07")
 launch_lesson("P08")
 launch_lesson("P09")
 launch_lesson("P10")
+launch_lesson("P11")
 run_module_checks("P01")
 run_module_checks("P02")
 run_module_checks("P03")
@@ -62,9 +64,10 @@ run_module_checks("P07")
 run_module_checks("P08")
 run_module_checks("P09")
 run_module_checks("P10")
+run_module_checks("P11")
 ```
 
-`P01` remains the reference implementation; `P02` through `P10` are implemented lessons spanning
+`P01` remains the reference implementation; `P02` through `P11` are implemented lessons spanning
 frame transforms, atmosphere, point-mass force trim, longitudinal static stability, and the
 longitudinal and lateral-directional modes into nonlinear rigid-body propagation. P06 turns P05's restoring-moment slope into a transparent reduced-order
 time response with explicit inertia and damping, separate fast/slow views, two independent damping
@@ -78,7 +81,11 @@ force and moment pulses, with independent input sweeps and a broken rotating-fra
 P10 models the transparent first-order actuator conceptually upstream of P09's internal moment
 boundary, separates requested, feasible, and delivered deflection, sweeps lag and rate authority
 independently, and exposes an omitted position envelope that invents pitch-moment authority. The lessons do
-not provide a direct P10-to-P09 adapter.
+not provide a direct P10-to-P09 adapter. P11 turns prescribed pitch-rate, attitude, and NED
+acceleration truth into gyro and body-frame accelerometer measurements. It independently sweeps
+constant gyro bias and deterministic accelerometer-error vector RMS, then exposes a broken
+specific-force equation that omits gravity. The curriculum connection from P10 through rigid-body
+truth to P11 is conceptual; no direct adapter or estimator is included.
 Implemented modules always form a contiguous prefix;
 `curriculum/modules.json` is authoritative as later governed batches advance that frontier.
 Scaffolded modules remain intentionally non-runnable until their own bounded batch is complete.

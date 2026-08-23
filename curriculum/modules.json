@@ -173,12 +173,12 @@
       "phase_title": "Six-degree-of-freedom simulation",
       "slug": "model-actuator-dynamics-and-limits",
       "folder": "modules/10-model-actuator-dynamics-and-limits",
-      "status": "scaffolded",
+      "status": "implemented",
       "implementation_batch": "P10",
       "prerequisites": [
         "P09"
       ],
-      "evidence_level": "none"
+      "evidence_level": "simulated"
     },
     {
       "number": 11,

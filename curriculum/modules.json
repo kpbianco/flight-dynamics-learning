@@ -205,12 +205,12 @@
       "phase_title": "Six-degree-of-freedom simulation",
       "slug": "validate-energy-and-frame-conventions",
       "folder": "modules/12-validate-energy-and-frame-conventions",
-      "status": "scaffolded",
+      "status": "implemented",
       "implementation_batch": "P12",
       "prerequisites": [
         "P11"
       ],
-      "evidence_level": "none"
+      "evidence_level": "simulated"
     },
     {
       "number": 13,

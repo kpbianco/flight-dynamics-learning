@@ -30,6 +30,7 @@ From a shell:
 ./bin/learn start P09
 ./bin/learn start P10
 ./bin/learn start P11
+./bin/learn start P12
 ./bin/learn list
 ./bin/learn status
 ```
@@ -54,6 +55,7 @@ launch_lesson("P08")
 launch_lesson("P09")
 launch_lesson("P10")
 launch_lesson("P11")
+launch_lesson("P12")
 run_module_checks("P01")
 run_module_checks("P02")
 run_module_checks("P03")
@@ -65,9 +67,10 @@ run_module_checks("P08")
 run_module_checks("P09")
 run_module_checks("P10")
 run_module_checks("P11")
+run_module_checks("P12")
 ```
 
-`P01` remains the reference implementation; `P02` through `P11` are implemented lessons spanning
+`P01` remains the reference implementation; `P02` through `P12` are implemented lessons spanning
 frame transforms, atmosphere, point-mass force trim, longitudinal static stability, and the
 longitudinal and lateral-directional modes into nonlinear rigid-body propagation. P06 turns P05's restoring-moment slope into a transparent reduced-order
 time response with explicit inertia and damping, separate fast/slow views, two independent damping
@@ -85,7 +88,12 @@ not provide a direct P10-to-P09 adapter. P11 turns prescribed pitch-rate, attitu
 acceleration truth into gyro and body-frame accelerometer measurements. It independently sweeps
 constant gyro bias and deterministic accelerometer-error vector RMS, then exposes a broken
 specific-force equation that omits gravity. The curriculum connection from P10 through rigid-body
-truth to P11 is conceptual; no direct adapter or estimator is included.
+truth to P11 is conceptual; no direct adapter or estimator is included. P12 carries P11's declared
+specific-force relationship into a fixed-attitude analytic body/NED trajectory. It independently
+sweeps body-forward non-gravity specific force and heading, verifies frame-invariant speed, kinetic
+energy, and power, closes mechanical-energy change to accumulated work, and exposes the false
+energy residual created by treating positive NED Down as positive height. The P11-to-P12 link is
+also conceptual; P12 does not consume P11 sensor histories or introduce estimation or control.
 Implemented modules always form a contiguous prefix;
 `curriculum/modules.json` is authoritative as later governed batches advance that frontier.
 Scaffolded modules remain intentionally non-runnable until their own bounded batch is complete.

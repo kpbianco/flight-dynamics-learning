@@ -2,7 +2,7 @@
 
 **Track:** Flight Dynamics and Aerospace GNC  
 **Phase 1:** Point-mass flight  
-**Status:** scaffolded
+**Status:** implemented
 
 ## Guiding question
 
@@ -10,28 +10,44 @@ What inputs, observable effects, and failure modes matter when you balance Force
 
 ## Physical mental model
 
-Start from a concrete system, measurement, or decision. Change one parameter at a time and connect every visible change to a physical or computational cause.
+P03 turns altitude and temperature into air density, then combines density with true airspeed to
+form dynamic pressure. P04 asks what angle of attack and thrust a notional aircraft would require
+for a steady path. In path axes, with thrust aligned forward, force trim requires
+`L = W cos(gamma)` and `T = D + W sin(gamma)`. The transparent aerodynamic model uses
+`q = 0.5 rho V^2`, `CL = L/(q S)`, a linear lift law, and `CD = CD0 + k CL^2`.
 
-## Required learning flow
+The equations can always return a finite requirement inside the learning domain, but a requirement
+is called feasible only when it stays below the declared `CLmax` and within the idealized constant
+thrust cap. This is point-mass force trim, not pitching-moment, elevator, propulsion, or full-aircraft
+trim.
 
-1. Establish a deterministic baseline.
-2. Show at least two complementary plots or views.
-3. Expose meaningful parameters as MATLAB controls or clearly editable Live Editor variables.
-4. Sweep two parameters independently.
-5. Include one deliberately broken or misleading case.
-6. Ask one observation question at a time.
-7. Finish with a teach-back and a deterministic check.
+## Learning flow
 
-## Implementation contract
+1. Read the path-axis force and sign conventions.
+2. Visualize a deterministic level baseline using P03's standard 5 km density.
+3. Sweep true airspeed alone and observe required lift coefficient, angle of attack, and the drag trade.
+4. Read the dynamic-pressure and induced-drag mechanism.
+5. Reset airspeed, sweep mass alone, and observe the added lift and thrust demand.
+6. Omit the one-half in dynamic pressure and diagnose the resulting half-weight force residual.
+7. Run independent numerical checks and give a two-sentence teach-back.
 
-The completed module owns these files:
+## Run
 
-- `lesson.m` — notebook-style MATLAB sections (`%%`) and concise narrative.
-- `interactive.m` — `uifigure` controls, plots, and immediate feedback.
-- `model.m` — deterministic calculations separated from presentation.
-- `experiment.m` — reproducible baseline, sweeps, and broken case.
-- `lesson.md` — tutor-facing explanation and misconceptions.
-- `walkthrough.md` — expected observations in order.
-- `checks.md` and `run_checks.m` — conceptual and numerical completion checks.
+From MATLAB with the repository root as the current folder:
 
-Prefer base MATLAB. Optional toolbox comparisons may be added only after the underlying operation is visible.
+```matlab
+launch_lesson("P04")
+run_module_checks("P04")
+```
+
+The implementation uses base MATLAB arithmetic and graphics. It contains no random input, file or
+network I/O, iterative trim solver, Simulink model, or opaque toolbox trim helper.
+
+## Files
+
+- `lesson.m` — sectioned entry point and physical narrative.
+- `model.m` — deterministic analytic force balance, limits, and residuals.
+- `experiment.m` — baseline, airspeed and mass sweeps, metrics, and broken dynamic-pressure case.
+- `interactive.m` — density, true-airspeed, mass, and flight-path-angle controls.
+- `lesson.md` and `walkthrough.md` — tutor explanation and observation order.
+- `checks.md` and `run_checks.m` — interpretation prompts and independent invariants.

@@ -71,8 +71,8 @@ class LearnCliTests(unittest.TestCase):
             self.manifest["module_count"],
         )
 
-    def test_permanently_implemented_p01_through_p03_start_and_check(self):
-        for module_id in ("P01", "P02", "P03"):
+    def test_permanently_implemented_p01_through_p04_start_and_check(self):
+        for module_id in ("P01", "P02", "P03", "P04"):
             with self.subTest(module=module_id):
                 result = self.run_cli("start", module_id)
                 self.assertEqual(result.returncode, 0, result.stderr)

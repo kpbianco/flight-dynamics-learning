@@ -77,12 +77,12 @@
       "phase_title": "Point-mass flight",
       "slug": "balance-forces-in-trim",
       "folder": "modules/04-balance-forces-in-trim",
-      "status": "scaffolded",
+      "status": "implemented",
       "implementation_batch": "P04",
       "prerequisites": [
         "P03"
       ],
-      "evidence_level": "none"
+      "evidence_level": "simulated"
     },
     {
       "number": 5,

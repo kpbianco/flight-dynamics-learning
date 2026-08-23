@@ -27,6 +27,7 @@ From a shell:
 ./bin/learn start P06
 ./bin/learn start P07
 ./bin/learn start P08
+./bin/learn start P09
 ./bin/learn list
 ./bin/learn status
 ```
@@ -48,6 +49,7 @@ launch_lesson("P05")
 launch_lesson("P06")
 launch_lesson("P07")
 launch_lesson("P08")
+launch_lesson("P09")
 run_module_checks("P01")
 run_module_checks("P02")
 run_module_checks("P03")
@@ -56,18 +58,21 @@ run_module_checks("P05")
 run_module_checks("P06")
 run_module_checks("P07")
 run_module_checks("P08")
+run_module_checks("P09")
 ```
 
-`P01` remains the reference implementation; `P02` through `P08` are implemented lessons spanning
+`P01` remains the reference implementation; `P02` through `P09` are implemented lessons spanning
 frame transforms, atmosphere, point-mass force trim, longitudinal static stability, and the
-longitudinal and lateral-directional modes. P06 turns P05's restoring-moment slope into a transparent reduced-order
+longitudinal and lateral-directional modes into nonlinear rigid-body propagation. P06 turns P05's restoring-moment slope into a transparent reduced-order
 time response with explicit inertia and damping, separate fast/slow views, two independent damping
 sweeps, and a broken damping sign. P07 contrasts fast roll subsidence, slow spiral motion, and
 oscillatory Dutch roll using isolated pulse/release experiments, two independent shaping sweeps, and
 a deliberately reversed spiral-stability sign. P08 traces nondimensional lateral stability
 derivatives through dimensional loads and state-matrix entries into coupled sideslip, roll, yaw, and
 bank-angle motion, with roll-damping and weathercock-stability sweeps plus a broken rate-normalization
-case. Implemented modules always form a contiguous prefix;
+case. P09 integrates NED position, body velocity, quaternion attitude, and body rates under transparent
+force and moment pulses, with independent input sweeps and a broken rotating-frame transport term.
+Implemented modules always form a contiguous prefix;
 `curriculum/modules.json` is authoritative as later governed batches advance that frontier.
 Scaffolded modules remain intentionally non-runnable until their own bounded batch is complete.
 

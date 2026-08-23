@@ -32,6 +32,7 @@ From a shell:
 ./bin/learn start P11
 ./bin/learn start P12
 ./bin/learn start P13
+./bin/learn start P14
 ./bin/learn list
 ./bin/learn status
 ```
@@ -58,6 +59,7 @@ launch_lesson("P10")
 launch_lesson("P11")
 launch_lesson("P12")
 launch_lesson("P13")
+launch_lesson("P14")
 run_module_checks("P01")
 run_module_checks("P02")
 run_module_checks("P03")
@@ -71,9 +73,10 @@ run_module_checks("P10")
 run_module_checks("P11")
 run_module_checks("P12")
 run_module_checks("P13")
+run_module_checks("P14")
 ```
 
-`P01` remains the reference implementation; `P02` through `P13` are implemented lessons spanning
+`P01` remains the reference implementation; `P02` through `P14` are implemented lessons spanning
 frame transforms, atmosphere, point-mass force trim, longitudinal static stability, and the
 longitudinal and lateral-directional modes into nonlinear rigid-body propagation. P06 turns P05's restoring-moment slope into a transparent reduced-order
 time response with explicit inertia and damping, separate fast/slow views, two independent damping
@@ -103,8 +106,15 @@ separate first-order flight-path lag, and fixed-step altitude kinematics. Indepe
 outer-gain capture/overshoot/saturation and inner-loop tracking/control-demand trades. A broken
 command-minus-measurement Down sign reverses only outer feedback; despite command saturation,
 altitude error is still growing at the end of the fixed 30 s trace.
-The model is a fixed-speed reduced-order teaching system, not a P10/P12 adapter, identified aircraft,
-energy-closure model, P15 speed controller, or flight-control validation artifact.
+P14 compounds on P13's cascade pattern with circular heading outside a transparent second-order bank
+response. It integrates continuous heading, wraps only display and feedback error, and uses the
+coordinated level-turn relation `psi_dot=g*tan(phi)/V`. Independent sweeps expose heading-to-bank
+gain/authority and roll-speed/acceleration trades. A broken raw subtraction interprets the
+`+170 deg` to `-170 deg` command as `-340 deg`, saturates left bank, and is still turning the long
+way at the end of the fixed `60 s` trace while independently computed shortest error grows.
+Both autopilot models are fixed-speed reduced-order teaching systems, not P10/P12/P13 adapters,
+identified aircraft, energy-closure models, P15 speed controllers, or flight-control validation
+artifacts.
 Implemented modules always form a contiguous prefix;
 `curriculum/modules.json` is authoritative as later governed batches advance that frontier.
 Scaffolded modules remain intentionally non-runnable until their own bounded batch is complete.

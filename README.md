@@ -23,6 +23,7 @@ From a shell:
 ./bin/learn start P02
 ./bin/learn start P03
 ./bin/learn start P04
+./bin/learn start P05
 ./bin/learn list
 ./bin/learn status
 ```
@@ -40,13 +41,20 @@ launch_lesson("P01")
 launch_lesson("P02")
 launch_lesson("P03")
 launch_lesson("P04")
+launch_lesson("P05")
 run_module_checks("P01")
 run_module_checks("P02")
 run_module_checks("P03")
 run_module_checks("P04")
+run_module_checks("P05")
 ```
 
-`P01` remains the reference implementation; `P02`, `P03`, and `P04` are the implemented frame-transform, atmosphere-model, and point-mass force-trim lessons. P04 carries P03 density and true airspeed into visible lift, drag, and thrust balances. Implemented modules always form a contiguous prefix; `curriculum/modules.json` is authoritative as later governed batches advance that frontier. Scaffolded modules remain intentionally non-runnable until their own bounded batch is complete.
+`P01` remains the reference implementation; `P02` through `P05` are implemented lessons spanning
+frame transforms, atmosphere, point-mass force trim, and longitudinal static stability. P05 carries
+P04's deterministic air state into visible neutral-point, static-margin, and restoring-moment
+relationships. Implemented modules always form a contiguous prefix; `curriculum/modules.json` is
+authoritative as later governed batches advance that frontier. Scaffolded modules remain
+intentionally non-runnable until their own bounded batch is complete.
 
 ## Module layout
 
